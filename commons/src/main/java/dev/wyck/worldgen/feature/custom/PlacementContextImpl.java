@@ -2,6 +2,7 @@ package dev.wyck.worldgen.feature.custom;
 
 import com.google.common.base.Preconditions;
 import dev.wyck.annotations.AsOf;
+import dev.wyck.worldgen.WorldInfo;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import org.bukkit.block.data.BlockData;
@@ -86,5 +87,10 @@ public final class PlacementContextImpl<C> implements PlacementContext<C> {
 
         net.minecraft.world.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
         return this.handle.level().addFreshEntity(nmsEntity, reason);
+    }
+
+    @Override
+    public WorldInfo worldContext() {
+        return new WorldInfo(this.handle.level().getMinecraftWorld().uuid, this.handle.level().getMinecraftWorld().bukkitName);
     }
 }

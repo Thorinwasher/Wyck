@@ -1,6 +1,7 @@
 package dev.wyck.worldgen.feature.custom;
 
 import dev.wyck.annotations.AsOf;
+import dev.wyck.worldgen.WorldInfo;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.BlockVector;
@@ -11,11 +12,10 @@ import java.util.Random;
 
 /**
  * The placement surface handed to a CustomFeature during world generation.
- *
  * @param <C> the feature's configuration type
- * @since 2.3.0
- * @version 2.3.0
  * @author Jsinco
+ * @version 2.3.0
+ * @since 2.3.0
  */
 @NullMarked
 @AsOf("2.3.0")
@@ -50,7 +50,7 @@ public interface PlacementContext<C> {
     /**
      * Sets a block at the given absolute world position.
      * @param position the absolute world position
-     * @param data the block data to place
+     * @param data     the block data to place
      * @since 2.3.0
      */
     @AsOf("2.3.0")
@@ -67,7 +67,7 @@ public interface PlacementContext<C> {
 
     /**
      * Removes a block at the given absolute world position.
-     * @param position the absolute world position
+     * @param position      the absolute world position
      * @param movedByPiston whether the block was moved by a piston
      * @return whether the block was removed
      * @since 2.3.0
@@ -88,10 +88,10 @@ public interface PlacementContext<C> {
 
     /**
      * Destroys a block at the given absolute world position.
-     * @param position the absolute world position
+     * @param position      the absolute world position
      * @param dropResources whether to drop resources
-     * @param breaker the entity that broke the block, if any
-     * @param updateLimit the maximum number of blocks to update
+     * @param breaker       the entity that broke the block, if any
+     * @param updateLimit   the maximum number of blocks to update
      * @return whether the block was destroyed
      * @since 2.3.0
      */
@@ -100,9 +100,9 @@ public interface PlacementContext<C> {
 
     /**
      * Destroys a block at the given absolute world position.
-     * @param position the absolute world position
+     * @param position      the absolute world position
      * @param dropResources whether to drop resources
-     * @param breaker the entity that broke the block, if any
+     * @param breaker       the entity that broke the block, if any
      * @return whether the block was destroyed
      * @since 2.3.0
      */
@@ -113,7 +113,7 @@ public interface PlacementContext<C> {
 
     /**
      * Destroys a block at the given absolute world position.
-     * @param position the absolute world position
+     * @param position      the absolute world position
      * @param dropResources whether to drop resources
      * @return whether the block was destroyed
      * @since 2.3.0
@@ -143,4 +143,11 @@ public interface PlacementContext<C> {
     default boolean addFreshEntity(Entity entity) {
         return addFreshEntity(entity, null);
     }
+
+    /**
+     * Gets the world info context for this placement
+     * @return information about the current world this feature will be placed in
+     */
+    @AsOf("3.4.0")
+    WorldInfo worldContext();
 }
