@@ -68,6 +68,7 @@ public final class ReferenceGenerator {
 
                 TypeSpec typeSpec = createTypeSpec(spec, version, existingVersions, preservedConstants);
                 JavaFile javaFile = JavaFile.builder(spec.outputClass().packageName(), typeSpec)
+                        .indent("    ")
                         .build();
                 javaFile.writeTo(outputRootPath);
                 System.out.println("generated " + outputPath);
