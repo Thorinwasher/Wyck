@@ -45,7 +45,7 @@ public final class ReferenceGenerator {
     private static final Pattern EXISTING_MEMBER = Pattern.compile(
             "@AsOf\\(\"([^\"]+)\"\\)\\s+(?:public\\s+)?(?:[\\w.<>]+\\s+)?(\\w+)\\s*\\("
     );
-    private static final Pattern PARAMETER = Pattern.compile("[a-zA-Z0-9]+(.*)");
+    private static final Pattern AS_OF_RE = Pattern.compile("@AsOf\\((.*)\\)");
 
     static void main(String[] args) throws Exception {
         String outputRoot = args[0];
@@ -60,7 +60,7 @@ public final class ReferenceGenerator {
                 Path outputPath = Path.of(
                         outputRoot,
                         spec.outputClass().packageName().replace('.', '/'),
-                        spec.outputClass() + ".java"
+                        spec.outputClass().simpleName() + ".java"
                 );
 
                 Map<String, String> existingVersions = readExistingVersions(outputPath);
@@ -313,12 +313,26 @@ public final class ReferenceGenerator {
                 System.err.println("warning: manual constant " + name + " now exists in vanilla again, dropping the manual copy");
                 continue;
             }
-            Matcher parameterMatcher = PARAMETER.matcher(entry);
+            Matcher asOfMatcher = AS_OF_RE.matcher(entry);
+            if (!asOfMatcher.find()) {
+                continue;
+            }
+            String since = asOfMatcher.group(1);
+            Matcher parameterMatcher = Pattern.compile("%s\\((.*)\\)".formatted(name)).matcher(entry);
             if (!parameterMatcher.find()) {
-                typeSpec.addEnumConstant(name);
+                typeSpec.addEnumConstant(name, TypeSpec.anonymousClassBuilder(
+                                ""
+                        ).addAnnotation(AnnotationSpec.builder(ClassName.get("dev.wyck.annotations", "AsOf"))
+                                .addMember("value", "$L", since)
+                                .build()
+                        ).build()
+                );
             } else {
                 typeSpec.addEnumConstant(name, TypeSpec.anonymousClassBuilder(parameterMatcher.group(1))
-                        .build()
+                        .addAnnotation(AnnotationSpec.builder(ClassName.get("dev.wyck.annotations", "AsOf"))
+                                .addMember("value", "$L", since)
+                                .build()
+                        ).build()
                 );
             }
         }
